@@ -25,7 +25,7 @@ df["frequency_bin"] = df.index                          # x = df["frequency_bin"
 if '__main__':
 
     # Save to text file (tab-separated)
-    df.to_csv("spectrum_data.txt", sep="\t", index=False)
+    #df.to_csv("spectrum_data.txt", sep="\t", index=False)
 
     # Plot spectrum
     plt.figure(figsize=(12,6))
