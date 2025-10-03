@@ -1,0 +1,2 @@
+
+a = 'Random typing'
