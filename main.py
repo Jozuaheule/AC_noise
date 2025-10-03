@@ -20,8 +20,9 @@ print(f"samples_per_chunck: {samples_per_chunck}")
 
 
 # 4. Calculate the so-called  ́effective sound pressure ́ as a function of time using equation 1.4 from the lecture notes
+# basis staat maar is nog niet helemaal af
 
-effective_pres = []
+x_2_data = []
 
 iterations = int(np.ceil((N_samples/samples_per_chunck)))
 print(iterations)
@@ -33,5 +34,7 @@ for i in range(iterations):
     
     # Calculating effective pressure
 
-    effective_pres.append()
-    
+    avg_x = np.average(chunk)
+    x_2_data.append(avg_x**2)
+
+effective_pres = 1/duration*sum(x_2_data)
