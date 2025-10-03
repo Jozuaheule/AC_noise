@@ -18,7 +18,9 @@ df = pd.DataFrame(data.flatten(), columns=["amplitude"])
 # Make an index column representing frequency bins
 df["samples"] = df.index                          # x = df["samples"], y = df["amplitude"]
 
+df = df
 
+"""
 if '__main__':
     # Save to text file (tab-separated)
     #df.to_csv("spectrum_data.txt", sep="\t", index=False)
@@ -33,3 +35,4 @@ if '__main__':
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+"""
