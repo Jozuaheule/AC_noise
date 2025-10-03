@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 mat_file = scipy.io.loadmat("Flyover_No_5.mat")
 
 variables = mat_file.keys()
-print(variables)
+print(f"variables: {variables}")
 
 # Extract the variable you care about
 data = mat_file["sound_pressure"]
@@ -20,7 +20,6 @@ df["samples"] = df.index                          # x = df["samples"], y = df["a
 
 
 if '__main__':
-
     # Save to text file (tab-separated)
     #df.to_csv("spectrum_data.txt", sep="\t", index=False)
 
