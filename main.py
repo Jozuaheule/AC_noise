@@ -1,4 +1,4 @@
-from data_processor import df
+df = pd.read_csv("spectrum_dataframe.csv")
 
 sample_frequency = 40000
 
