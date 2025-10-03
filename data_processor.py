@@ -1,6 +1,7 @@
 import scipy.io
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 # Load .mat file
 mat_file = scipy.io.loadmat("Flyover_No_5.mat")
