@@ -1,3 +1,4 @@
+from data_processor import df
 
 
 # 1. Load aircraft noise data file 
