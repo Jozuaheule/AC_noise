@@ -19,7 +19,12 @@ df = pd.DataFrame(data.flatten(), columns=["amplitude"])
 # Make an index column representing frequency bins
 df["frequency_bin"] = df.index                          # x = df["frequency_bin"], y = df["amplitude"]
 
+
+
 if '__main__':
+
+    # Save to text file (tab-separated)
+    df.to_csv("spectrum_data.txt", sep="\t", index=False)
 
     # Plot spectrum
     plt.figure(figsize=(12,6))

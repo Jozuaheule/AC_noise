@@ -1,5 +1,8 @@
 from data_processor import df
 
+sample_frequency = 40000
+
+
 
 # 1. Load aircraft noise data file 
 
