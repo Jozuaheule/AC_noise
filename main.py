@@ -55,9 +55,10 @@ for i in range(sample_iterations):
     fourier_df[f'chunk {i}'] = np.fft.fft(chunk['amplitude']**2,)
     fourier_df[f'chunkfreq {i}'] = np.fft.fftfreq(len(chunk), d=1/sampling_frequency)
 
-    plt.plot(fourier_df[f'chunkfreq {i}'], fourier_df[f'chunk {i}'], linewidth=0.7, color='purple')
 
+    # Plot function for individual fourier transforms
     """
+    plt.plot(fourier_df[f'chunkfreq {i}'], fourier_df[f'chunk {i}'], linewidth=0.7, color='purple')
     plt.title("Fourier Transform")
     plt.xlabel("Frequency (s)")
     plt.ylabel("Pa^2/Hz (dB)")
