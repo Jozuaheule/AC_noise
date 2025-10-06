@@ -1,6 +1,7 @@
 from data_processor import df
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 sampling_frequency = 40000
@@ -36,16 +37,29 @@ print(f"samples_per_chunck: {samples_per_chunck}")
 # x_2_data is a list containing the squared average pressure for each chunk
 
 effective_pressures = []
+fourier_df = pd.DataFrame()
 
 sample_iterations = int(np.ceil((N_samples/samples_per_chunck)))
 x_effective_pres = np.arange(0.05, duration, chunk_duration)
 
-for i in range(sample_iterations):
+for i in range(1):
     start_idx = int(i * samples_per_chunck)
     end_idx = int(min(start_idx + samples_per_chunck, N_samples))
     #print(f"start_idx: {start_idx}, end_idx: {end_idx}")
 
     chunk = df[start_idx:end_idx]           # x(t) waardes van de chunk
+
+    # fourier transformation of chunk
+    fourier_df[f'chunk {i}'] = np.fft.fft(chunk['amplitude']**2)
+
+    plt.plot(np.arange(samples_per_chunck), fourier_df, linewidth=0.7, color='purple')
+
+    plt.title("Fourier Transform")
+    plt.xlabel("Frequency (s)")
+    plt.ylabel("Pa^2/Hz (dB)")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
     # appending chunk to x_2_data set
     avg_x = np.average(chunk)
@@ -88,9 +102,10 @@ def plot_OSPL(x_effective_pres, OSPL):
 
 # 6. DFT transformation
 
-fourier_transform = np.fft.fft(effective_pressures**2)
 
-def fourier(x_effective_pres, fourier_transform):
+print(fourier_df)
+
+def fourier_plot(x_effective_pres, fourier_transform):
 
     plt.plot(x_effective_pres, fourier_transform, linewidth=0.7, color='purple')
 
@@ -101,7 +116,7 @@ def fourier(x_effective_pres, fourier_transform):
     plt.tight_layout()
     plt.show()
 
-fourier(x_effective_pres, fourier_transform)
+#fourier_plot(x_effective_pres, fourier_transform)
 
 
 
