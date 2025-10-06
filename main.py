@@ -71,7 +71,8 @@ def plot_effective_pres(df, effective_pressures):
 
 # 5. Calculate the OSPL for each chunk. 
 
-OSPL = 10 * np.log10(effective_pressures**2 / Pe_0**2)
+OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]
+
 
 def plot_OSPL(x_effective_pres, OSPL):
 
@@ -84,7 +85,7 @@ def plot_OSPL(x_effective_pres, OSPL):
     plt.tight_layout()
     plt.show()
 
-plot_OSPL(x_effective_pressure, OSPL)
+plot_OSPL(x_effective_pres, OSPL)
 
 
 
