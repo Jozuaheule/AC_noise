@@ -62,8 +62,9 @@ def plot_effective_pres(df, effective_pressures):
     plt.plot(x_effective_pres, effective_pressures, linewidth=0.7, color='green')
 
     plt.title("Spectrum of Sound Pressure")
-    plt.xlabel("Samples")
-    plt.ylabel("Amplitude")
+    plt.xlabel("Time (s)")
+    plt.xlim(left=0)    
+    plt.ylabel("Sound Pressure (Pa)")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
