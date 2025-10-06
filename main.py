@@ -44,7 +44,7 @@ fourier_df = pd.DataFrame()
 sample_iterations = int(np.ceil((N_samples/samples_per_chunck)))
 x_effective_pres = np.arange(0.05, duration, chunk_duration)
 
-for i in range(1):
+for i in range(sample_iterations):
     start_idx = int(i * samples_per_chunck)
     end_idx = int(min(start_idx + samples_per_chunck, N_samples))
     #print(f"start_idx: {start_idx}, end_idx: {end_idx}")
@@ -108,7 +108,7 @@ def plot_OSPL(x_effective_pres, OSPL):
 # 6. DFT transformation
 
 
-print(fourier_df)
+# print(fourier_df)
 
 def fourier_plot(x_effective_pres, fourier_transform):
 
