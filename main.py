@@ -24,10 +24,7 @@ def plot_spectrum(df):
 duration = N_samples / sampling_frequency
 
 df["samples"] = df["samples"] / sampling_frequency
-
-
-plot_spectrum(df)
-print(f"duration: {duration}")
+#plot_spectrum(df)
 
 
 # 3. How many samples correspond to a data lengt of T 0.1 seconds
@@ -55,8 +52,23 @@ for i in range(sample_iterations):
 
     effective_pressures.append(effective_pres_dt)
 
-"""
+
 def plot_effective_pres(df, effective_pressures):
     
-    x_effective_pres = np.arange(0, len(effective_pressures)) * chunk_duration
-"""
+    x_effective_pres = np.arange(0.05, duration, chunk_duration)
+
+    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue')
+    plt.plot(x_effective_pres, effective_pressures, linewidth=0.7, color='green')
+
+    plt.title("Spectrum of Sound Pressure")
+    plt.xlabel("Samples")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+plot_effective_pres(df, effective_pressures)
+
+
+
+
