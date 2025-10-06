@@ -84,9 +84,24 @@ def plot_OSPL(x_effective_pres, OSPL):
     plt.tight_layout()
     plt.show()
 
-plot_OSPL(x_effective_pres, OSPL)
+#plot_OSPL(x_effective_pres, OSPL)
 
+# 6. DFT transformation
 
+fourier_transform = np.fft.fft(effective_pressures**2)
+
+def fourier(x_effective_pres, fourier_transform):
+
+    plt.plot(x_effective_pres, fourier_transform, linewidth=0.7, color='purple')
+
+    plt.title("Fourier Transform")
+    plt.xlabel("Frequency (s)")
+    plt.ylabel("Pa^2/Hz (dB)")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+fourier(x_effective_pres, fourier_transform)
 
 
 
