@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 sampling_frequency = 40000
 N_samples = len(df.index)
 chunk_duration = 0.1
+Pe_0 = 20e-5 #N/m^2
 
 # 1. Load aircraft noise data file 
 
@@ -38,6 +39,7 @@ print(f"samples_per_chunck: {samples_per_chunck}")
 effective_pressures = []
 
 sample_iterations = int(np.ceil((N_samples/samples_per_chunck)))
+x_effective_pres = np.arange(0.05, duration, chunk_duration)
 
 for i in range(sample_iterations):
     start_idx = int(i * samples_per_chunck)
@@ -54,8 +56,6 @@ for i in range(sample_iterations):
 
 # Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
-    
-    x_effective_pres = np.arange(0.05, duration, chunk_duration)
 
     plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue')
     plt.plot(x_effective_pres, effective_pressures, linewidth=0.7, color='green')
@@ -67,7 +67,24 @@ def plot_effective_pres(df, effective_pressures):
     plt.tight_layout()
     plt.show()
 
-plot_effective_pres(df, effective_pressures)
+#plot_effective_pres(df, effective_pressures)
+
+# 5. Calculate the OSPL for each chunk. 
+
+OSPL = 10 * np.log10(effective_pressures**2 / Pe_0**2)
+
+def plot_OSPL(x_effective_pres, OSPL):
+
+    plt.plot(x_effective_pres, OSPL, linewidth=0.7, color='red')
+
+    plt.title("Overall Sound Pressure Level (OSPL)")
+    plt.xlabel("Time (s)")
+    plt.ylabel("OSPL (dB)")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+plot_OSPL(x_effective_pressure, OSPL)
 
 
 
