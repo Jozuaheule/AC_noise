@@ -48,11 +48,11 @@ for i in range(sample_iterations):
 
     # appending chunk to x_2_data set
     avg_x = np.average(chunk)
-    effective_pres_dt = 1/chunk_duration*np.sum(chunk['amplitude']**2)
+    effective_pres_dt = np.sqrt(1/chunk_duration*np.sum(chunk['amplitude']**2))
 
     effective_pressures.append(effective_pres_dt)
 
-
+# Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
     
     x_effective_pres = np.arange(0.05, duration, chunk_duration)
@@ -68,6 +68,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.show()
 
 plot_effective_pres(df, effective_pressures)
+
 
 
 
