@@ -2,29 +2,31 @@ from data_processor import df
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-sampling_frequency = 40000
+sampling_frequency = 40000  # Hz
 N_samples = len(df.index)
 chunk_duration = 0.1
-Pe_0 = 20e-5 #N/m^2
+Pe_0 = 20e-5  # N/m^2
 
-# 1. Load aircraft noise data file 
+# Voeg een tijd-as toe (in seconden)
+df["time"] = np.arange(N_samples) / sampling_frequency
 
 def plot_spectrum(df):
-    plt.figure(figsize=(12,6))
-    plt.plot(df["samples"], df["amplitude"], linewidth=0.7)
-    plt.title("Spectrum of Sound Pressure")
-    plt.xlabel("time (s)")
-    plt.ylabel("Pascal (Pa)")
+    plt.figure(figsize=(12, 6))
+    plt.plot(df["time"], df["amplitude"], linewidth=0.7)
+    plt.title("Sound Pressure vs Time")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude (Pa)")
+    plt.xlim(left=0)
     plt.grid(True)
     plt.tight_layout()
     plt.show()
 
 # 2. Plot time vs. signal in figure 1
 duration = N_samples / sampling_frequency
+print(f"duration: {duration}")
 
 df["samples"] = df["samples"] / sampling_frequency
-plot_spectrum(df)
+# plot_spectrum(df)
 
 
 # 3. How many samples correspond to a data lengt of T 0.1 seconds
@@ -67,6 +69,8 @@ def plot_effective_pres(df, effective_pressures):
     plt.show()
 
 plot_effective_pres(df, effective_pressures)
+
+
 
 # 5. Calculate the OSPL for each chunk. 
 
