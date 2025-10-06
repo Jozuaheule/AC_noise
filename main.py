@@ -39,7 +39,7 @@ print(f"samples_per_chunck: {samples_per_chunck}")
 # x_2_data is a list containing the squared average pressure for each chunk
 
 effective_pressures = []
-fourier_df = pd.DataFrame()
+fourier_data = {}  # Use a dictionary to store Fourier transform results
 
 sample_iterations = int(np.ceil((N_samples/samples_per_chunck)))
 x_effective_pres = np.arange(0.05, duration, chunk_duration)
@@ -47,25 +47,19 @@ x_effective_pres = np.arange(0.05, duration, chunk_duration)
 for i in range(sample_iterations):
     start_idx = int(i * samples_per_chunck)
     end_idx = int(min(start_idx + samples_per_chunck, N_samples))
-    #print(f"start_idx: {start_idx}, end_idx: {end_idx}")
 
-    chunk = df[start_idx:end_idx]           # x(t) waardes van de chunk
+    chunk = df[start_idx:end_idx]  # Extract the chunk
 
-    # fourier transformation of chunk
-    fourier_df[f'chunk {i}'] = np.fft.fft(chunk['amplitude']**2,)
-    fourier_df[f'chunkfreq {i}'] = np.fft.fftfreq(len(chunk), d=1/sampling_frequency)
+    # Perform Fourier transformation
+    fft_result = np.fft.fft(chunk['amplitude']**2)
+    fft_freqs = np.fft.fftfreq(len(chunk), d=1/sampling_frequency)
+    pos_mask = fft_freqs >= 0
 
-
-    # Plot function for individual fourier transforms
-    """
-    plt.plot(fourier_df[f'chunkfreq {i}'], fourier_df[f'chunk {i}'], linewidth=0.7, color='purple')
-    plt.title("Fourier Transform")
-    plt.xlabel("Frequency (s)")
-    plt.ylabel("Pa^2/Hz (dB)")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-    """
+    # Store results in the dictionary
+    fourier_data[f'chunk_{i}'] = {
+        'fft': fft_result[pos_mask],
+        'freqs': fft_freqs[pos_mask]
+    }
 
     # appending chunk to x_2_data set
     avg_x = np.average(chunk)
@@ -87,7 +81,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.tight_layout()
     plt.show()
 
-plot_effective_pres(df, effective_pressures)
+#plot_effective_pres(df, effective_pressures)
 
 
 # 5. Calculate the OSPL for each chunk. 
@@ -110,21 +104,46 @@ def plot_OSPL(x_effective_pres, OSPL):
 
 # 6. DFT transformation
 
+fourier_df = pd.DataFrame.from_dict(fourier_data, orient='index')
+fourier_df = fourier_df[:-1]
 
 print(fourier_df)
 
-def fourier_plot(x_effective_pres, fourier_transform):
+# Plot function for individual fourier transforms
+def fourier_plot(fourier_df, x_effective_pres):
 
-    plt.plot(x_effective_pres, fourier_transform, linewidth=0.7, color='purple')
-
+    plt.plot(fourier_df['freqs'][0], fourier_df['fft'][0] , linewidth=0.7, color='purple')
     plt.title("Fourier Transform")
     plt.xlabel("Frequency (s)")
     plt.ylabel("Pa^2/Hz (dB)")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+   
+#fourier_plot(fourier_df)
 
-#fourier_plot(x_effective_pres, fourier_transform)
+# Convert list of complex FFT results to magnitudes
+magnitudes = np.array([np.abs(np.array(f)) for f in fourier_df['fft']])
 
+# Convert frequencies to a 2D array (assuming they’re all identical)
+freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformation
+times = x_effective_pres  # one per chunk
 
+# Convert to decibels (dB scale)
+spectrogram = 20 * np.log10(magnitudes + 1e-6)                  # NAKIJKEN
 
+# --- Plot ---
+plt.figure(figsize=(10, 6))
+plt.imshow(
+    spectrogram.T,
+    extent=[times.min(), times.max(), freqs.min(), freqs.max()],
+    origin='lower',
+    aspect='auto',
+    cmap='jet',
+    vmin=-20, vmax=60
+)
+plt.colorbar(label='dB')
+plt.xlabel('time [s]')
+plt.ylabel('frequency [kHz]')
+plt.title('Spectrogram of flyover')
+plt.show()
