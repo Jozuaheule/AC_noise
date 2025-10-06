@@ -12,10 +12,9 @@ chunk_duration = 0.1
 def plot_spectrum(df):
     plt.figure(figsize=(12,6))
     plt.plot(df["samples"], df["amplitude"], linewidth=0.7)
-
     plt.title("Spectrum of Sound Pressure")
-    plt.xlabel("Samples")
-    plt.ylabel("Amplitude")
+    plt.xlabel("time (s)")
+    plt.ylabel("Pascal (Pa)")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
@@ -48,11 +47,11 @@ for i in range(sample_iterations):
 
     # appending chunk to x_2_data set
     avg_x = np.average(chunk)
-    effective_pres_dt = 1/chunk_duration*np.sum(chunk['amplitude']**2)
+    effective_pres_dt = np.sqrt(1/chunk_duration*np.sum(chunk['amplitude']**2))
 
     effective_pressures.append(effective_pres_dt)
 
-
+# Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
     
     x_effective_pres = np.arange(0.05, duration, chunk_duration)
@@ -68,6 +67,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.show()
 
 plot_effective_pres(df, effective_pressures)
+
 
 
 
