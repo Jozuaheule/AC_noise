@@ -24,7 +24,7 @@ def plot_spectrum(df):
 duration = N_samples / sampling_frequency
 
 df["samples"] = df["samples"] / sampling_frequency
-#plot_spectrum(df)
+plot_spectrum(df)
 
 
 # 3. How many samples correspond to a data lengt of T 0.1 seconds
@@ -66,7 +66,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.tight_layout()
     plt.show()
 
-#plot_effective_pres(df, effective_pressures)
+plot_effective_pres(df, effective_pressures)
 
 # 5. Calculate the OSPL for each chunk. 
 
