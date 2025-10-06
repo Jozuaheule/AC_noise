@@ -1,5 +1,7 @@
 from data_processor import df
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 sampling_frequency = 40000
 N_samples = len(df.index)
@@ -7,9 +9,24 @@ chunk_duration = 0.1
 
 # 1. Load aircraft noise data file 
 
+def plot_spectrum(df):
+    plt.figure(figsize=(12,6))
+    plt.plot(df["samples"], df["amplitude"], linewidth=0.7)
+
+    plt.title("Spectrum of Sound Pressure")
+    plt.xlabel("Samples")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
 # 2. Plot time vs. signal in figure 1
 duration = N_samples / sampling_frequency
+
+df["samples"] = df["samples"] / sampling_frequency
+
+
+plot_spectrum(df)
 print(f"duration: {duration}")
 
 
@@ -38,3 +55,8 @@ for i in range(sample_iterations):
 
     effective_pressures.append(effective_pres_dt)
 
+"""
+def plot_effective_pres(df, effective_pressures):
+    
+    x_effective_pres = np.arange(0, len(effective_pressures)) * chunk_duration
+"""
