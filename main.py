@@ -52,16 +52,20 @@ for i in range(sample_iterations):
     chunk = df[start_idx:end_idx]           # x(t) waardes van de chunk
 
     # fourier transformation of chunk
-    fourier_df[f'chunk {i}'] = np.fft.fft(chunk['amplitude']**2)
+    fourier_df[f'chunk {i}'] = np.fft.fft(chunk['amplitude']**2,)
+    fourier_df[f'chunkfreq {i}'] = np.fft.fftfreq(len(chunk), d=1/sampling_frequency)
 
-    plt.plot(np.arange(samples_per_chunck), fourier_df, linewidth=0.7, color='purple')
 
+    # Plot function for individual fourier transforms
+    """
+    plt.plot(fourier_df[f'chunkfreq {i}'], fourier_df[f'chunk {i}'], linewidth=0.7, color='purple')
     plt.title("Fourier Transform")
     plt.xlabel("Frequency (s)")
     plt.ylabel("Pa^2/Hz (dB)")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+    """
 
     # appending chunk to x_2_data set
     avg_x = np.average(chunk)
@@ -84,7 +88,6 @@ def plot_effective_pres(df, effective_pressures):
     plt.show()
 
 plot_effective_pres(df, effective_pressures)
-
 
 
 # 5. Calculate the OSPL for each chunk. 
