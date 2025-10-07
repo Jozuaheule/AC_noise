@@ -130,7 +130,7 @@ freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformat
 times = x_effective_pres  # one per chunk
 
 # Convert to decibels (dB scale)
-spectrogram = 20 * np.log10(magnitudes + 1e-6)                  # NAKIJKEN
+spectrogram = 20 * np.log10(magnitudes)                  # NAKIJKEN
 
 # --- Plot ---
 plt.figure(figsize=(10, 6))
