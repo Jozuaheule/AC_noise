@@ -16,7 +16,7 @@ def plot_spectrum(df):
     plt.plot(df["time"], df["amplitude"], linewidth=0.7)
     plt.title("Sound Pressure vs Time")
     plt.xlabel("Time (s)")
-    plt.ylabel("Amplitude (Pa)")
+    plt.ylabel("Pressure (Pa)")
     plt.xlim(left=0)
     plt.grid(True)
     plt.tight_layout()
@@ -73,7 +73,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue')
     plt.plot(x_effective_pres, effective_pressures, linewidth=0.7, color='green')
 
-    plt.title("Spectrum of Sound Pressure")
+    plt.title("Waveform with effective pressure")
     plt.xlabel("Time (s)")
     plt.xlim(left=0)    
     plt.ylabel("Sound Pressure (Pa)")
@@ -81,12 +81,12 @@ def plot_effective_pres(df, effective_pressures):
     plt.tight_layout()
     plt.show()
 
-#plot_effective_pres(df, effective_pressures)
+plot_effective_pres(df, effective_pressures)
 
 
 # 5. Calculate the OSPL for each chunk. 
 
-OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]
+OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   # Moet de 10 * niet 20 * zijn?
 
 
 def plot_OSPL(x_effective_pres, OSPL):
@@ -100,7 +100,7 @@ def plot_OSPL(x_effective_pres, OSPL):
     plt.tight_layout()
     plt.show()
 
-#plot_OSPL(x_effective_pres, OSPL)
+plot_OSPL(x_effective_pres, OSPL)
 
 # 6. DFT transformation
 
@@ -120,7 +120,7 @@ def fourier_plot(fourier_df, x_effective_pres):
     plt.tight_layout()
     plt.show()
    
-#fourier_plot(fourier_df)
+fourier_plot(fourier_df)
 
 # Convert list of complex FFT results to magnitudes
 magnitudes = np.array([np.abs(np.array(f)) for f in fourier_df['fft']])
