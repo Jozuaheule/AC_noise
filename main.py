@@ -81,7 +81,7 @@ def plot_effective_pres(df, effective_pressures):
     plt.tight_layout()
     plt.show()
 
-plot_effective_pres(df, effective_pressures)
+#plot_effective_pres(df, effective_pressures)
 
 
 # 5. Calculate the OSPL for each chunk. 
@@ -100,7 +100,7 @@ def plot_OSPL(x_effective_pres, OSPL):
     plt.tight_layout()
     plt.show()
 
-plot_OSPL(x_effective_pres, OSPL)
+#plot_OSPL(x_effective_pres, OSPL)
 
 # 6. DFT transformation
 
@@ -120,7 +120,7 @@ def fourier_plot(fourier_df, x_effective_pres):
     plt.tight_layout()
     plt.show()
    
-fourier_plot(fourier_df)
+#fourier_plot(fourier_df)
 
 # Convert list of complex FFT results to magnitudes
 magnitudes = np.array([np.abs(np.array(f)) for f in fourier_df['fft']])
