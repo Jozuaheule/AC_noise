@@ -133,6 +133,7 @@ times = x_effective_pres  # one per chunk
 spectrogram = 20 * np.log10(magnitudes)                  # NAKIJKEN
 
 # --- Plot ---
+'''
 plt.figure(figsize=(10, 6))
 plt.imshow(
     spectrogram.T,
@@ -146,4 +147,20 @@ plt.colorbar(label='dB')
 plt.xlabel('time [s]')
 plt.ylabel('frequency [kHz]')
 plt.title('Spectrogram of flyover')
+plt.show()
+'''
+# 7  instantaneous OSPL (in dB) as a function of time
+linear_matrix = 10 ** (spectrogram / 10)
+OSPL_freq = 10 * np.log10(np.sum(linear_matrix, axis=1))
+#print(spectrogram)
+#print('OSPL', OSPL_freq.shape)
+plt.figure(figsize=(10, 5))
+plt.plot(x_effective_pres, OSPL, color='red', label='Time-domain OSPL (Q5)')
+plt.plot(x_effective_pres[:len(OSPL_freq)], OSPL_freq, '--', color='blue', label='Freq-domain OSPL (Q7)')
+plt.xlabel('Time (s)')
+plt.ylabel('OSPL (dB)')
+plt.title('Instantaneous OSPL Comparison')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
 plt.show()
