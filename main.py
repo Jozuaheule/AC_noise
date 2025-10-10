@@ -189,12 +189,13 @@ lists = abs(fourier_df['power']).tolist()
 power_array = np.vstack(lists)
 power_array_db = 10* np.log10(power_array/Pe_0**2)
 
-# # Convert frequencies to a 2D array (assuming they’re all identical)
+# # Convert frequencies to a 2D array (assuming they’re all identical) 
+# Voornamelijk voor assen van grafiek
 freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformation
 times = x_effective_pres  # one per chunk
 
 spectrogram = power_array_db
-print(spectrogram.shape)
+#print(spectrogram.shape)
 
 # --- Plot ---
 def spectrum_plot(spectrogram, freqs, times):
@@ -217,8 +218,15 @@ def spectrum_plot(spectrogram, freqs, times):
 #spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
-linear_matrix = 10 ** (spectrogram / 10)
-OSPL_freq = 10 * np.log10(np.sum(linear_matrix, axis=1))
+
+# wat er gebeurt, over de power_array_db van (shape 271, 2000) wordt omgezet in power_not_db na het terug te zetten naar niet dB vorm
+# bij OSPL_freq wordt elke colum gesummed (dat betekend axis=1) waardoor je shape (271,1) hebt. Zie ook formules in slide 15 in part 1
+
+power_not_db = 10 ** (power_array_db / 10)
+OSPL_freq = 10 * np.log10(np.sum(power_not_db, axis=1))
+
+
+print(OSPL_freq.shape)
 #print(spectrogram)
 #print('OSPL', OSPL_freq.shape)
 plt.figure(figsize=(10, 5))
