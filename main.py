@@ -56,7 +56,7 @@ for i in range(sample_iterations):
     # Perform Fourier transformation
     fft_result = np.fft.fft(chunk['amplitude']**2)          # Result is Xm
     
-    fft_result = 20 * np.log10(fft_result)
+    #fft_result = 20 * np.log10(fft_result)
     #print(np.max(fft_result))
 
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
@@ -168,22 +168,6 @@ Name: power, Length: 271, dtype: object
 """
 
 
-
-#print(power_array.shape)
-
-
-# # Step 2: Stack them into a 2D numpy array
-# power_array = np.vstack(lists)
-
-# power_array = np.array()
-
-# for i in len(fourier_df['power']):
-#     power_array.vstack(i)
-
-# print(power_array)
-
-# print(fourier_df)
-
 # Plot function for individual fourier transforms
 def fourier_plot(fourier_df):
 
@@ -197,24 +181,19 @@ def fourier_plot(fourier_df):
    
 #fourier_plot(fourier_df)
 
-lists = fourier_df['power'].tolist()
-power_array = np.vstack(lists)
+## ------- STEP 3, OPGAVE 6 ---- ##
 
-# # Convert list of complex FFT results to magnitudes
-# powers = np.array([np.array(p) for p in fourier_df['power']])         #Pm p114 reader
-# fouriers = np.array([np.abs(np.array(f)) for f in fourier_df['fft']])
+# fourier['power'] wordt omgezet in juiste format (271,2000)
+# en ook power array omgezet naar dB met Pe0
+lists = abs(fourier_df['power']).tolist()
+power_array = np.vstack(lists)
+power_array = 10* np.log10(power_array/Pe_0**2)
 
 # # Convert frequencies to a 2D array (assuming they’re all identical)
 freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformation
 times = x_effective_pres  # one per chunk
 
-# # Convert to decibels (dB scale)
-
-#                   # NAKIJKEN
-# print(spectrogram.shape)
-
 spectrogram = np.transpose(power_array)
-#print(spectrogram)
 
 # --- Plot ---
 def spectrum_plot(spectrogram, freqs, times):
@@ -234,8 +213,7 @@ def spectrum_plot(spectrogram, freqs, times):
     plt.title('Spectrogram of flyover')
     plt.show()
 
-spectrum_plot(spectrogram, freqs, times)
-
+#spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
 linear_matrix = 10 ** (spectrogram / 10)
@@ -251,4 +229,4 @@ plt.title('Instantaneous OSPL Comparison')
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-#plt.show()
+plt.show()

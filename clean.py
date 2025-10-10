@@ -44,11 +44,6 @@ for i in range(sample_iterations):
     # Perform Fourier transformation
     fft_result = np.fft.fft(chunk['amplitude']**2)          # Result is Xm
 
-    
-    # transform to DB
-    #fft_result = 20 * np.log10(fft_result)
-    #print(np.max(fft_result))
-
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
 
     power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
@@ -122,9 +117,11 @@ chunk_270    [1.7024133983482463e-06, 2.6855466033158217e-0...
 Name: power, Length: 271, dtype: object
 """
 
+# fourier['power'] wordt omgezet in juiste format (271,2000)
+# en ook power array omgezet naar dB met Pe0
 lists = abs(fourier_df['power']).tolist()
 power_array = np.vstack(lists)
-power_array = 20 * np.log10(power_array)
+power_array = 10* np.log10(power_array/Pe_0**2)
 
 
 # # Convert frequencies to a 2D array (assuming they’re all identical)
@@ -132,7 +129,6 @@ freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformat
 times = x_effective_pres  # one per chunk
 
 spectrogram = np.transpose(power_array)
-
 
 # --- Plot ---
 def spectrum_plot(spectrogram, freqs, times):
@@ -143,7 +139,8 @@ def spectrum_plot(spectrogram, freqs, times):
         extent=[times.min(), times.max(), freqs.min(), freqs.max()],
         origin='lower',
         aspect='auto',
-        cmap='jet'
+        cmap='jet',
+        vmin=-20, vmax=60
     )
     plt.colorbar(label='dB')
     plt.xlabel('time [s]')
