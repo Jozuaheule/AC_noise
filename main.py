@@ -133,22 +133,25 @@ times = x_effective_pres  # one per chunk
 spectrogram = 20 * np.log10(magnitudes)                  # NAKIJKEN
 
 # --- Plot ---
-'''
-plt.figure(figsize=(10, 6))
-plt.imshow(
-    spectrogram.T,
-    extent=[times.min(), times.max(), freqs.min(), freqs.max()],
-    origin='lower',
-    aspect='auto',
-    cmap='jet',
-    vmin=-20, vmax=60
-)
-plt.colorbar(label='dB')
-plt.xlabel('time [s]')
-plt.ylabel('frequency [kHz]')
-plt.title('Spectrogram of flyover')
-plt.show()
-'''
+def spectrum_plot(spectrogram, freqs, times):
+
+    plt.figure(figsize=(10, 6))
+    plt.imshow(
+        spectrogram.T,
+        extent=[times.min(), times.max(), freqs.min(), freqs.max()],
+        origin='lower',
+        aspect='auto',
+        cmap='jet',
+        vmin=-20, vmax=60
+    )
+    plt.colorbar(label='dB')
+    plt.xlabel('time [s]')
+    plt.ylabel('frequency [kHz]')
+    plt.title('Spectrogram of flyover')
+    plt.show()
+
+#spectrum_plot(spectrogram, freqs, times)
+
 # 7  instantaneous OSPL (in dB) as a function of time
 linear_matrix = 10 ** (spectrogram / 10)
 OSPL_freq = 10 * np.log10(np.sum(linear_matrix, axis=1))
