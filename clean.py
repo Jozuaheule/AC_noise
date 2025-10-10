@@ -11,17 +11,6 @@ Pe_0 = 20e-5  # N/m^2
 # Voeg een tijd-as toe (in seconden)
 df["time"] = np.arange(N_samples) / sampling_frequency
 
-def plot_spectrum(df):
-    plt.figure(figsize=(12, 6))
-    plt.plot(df["time"], df["amplitude"], linewidth=0.7)
-    plt.title("Sound Pressure vs Time")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Pressure (Pa)")
-    plt.xlim(left=0)
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
 # 2. Plot time vs. signal in figure 1
 duration = N_samples / sampling_frequency
 dt = 1/sampling_frequency
@@ -30,7 +19,6 @@ print(f"duration: {duration}")
 
 df["samples"] = df["samples"] / sampling_frequency
 #plot_spectrum(df)
-
 
 # 3. How many samples correspond to a data lengt of T 0.1 seconds
 samples_per_chunck = sampling_frequency * chunk_duration
@@ -55,8 +43,10 @@ for i in range(sample_iterations):
     ## ----------- Calculations for Fourier vraag --------------- ## 
     # Perform Fourier transformation
     fft_result = np.fft.fft(chunk['amplitude']**2)          # Result is Xm
+
     
-    fft_result = 20 * np.log10(fft_result)
+    # transform to DB
+    #fft_result = 20 * np.log10(fft_result)
     #print(np.max(fft_result))
 
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
@@ -77,40 +67,6 @@ for i in range(sample_iterations):
     effective_pres_dt = np.sqrt(1/chunk_duration*(np.sum(chunk['amplitude']**2))*dt)
     effective_pressures.append(effective_pres_dt)
 
-# Plot function for effective sound pressure
-def plot_effective_pres(df, effective_pressures):
-
-    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue')
-    plt.plot(x_effective_pres, effective_pressures, linewidth=2, color='green')
-
-    plt.title("Waveform with effective pressure")
-    plt.xlabel("Time (s)")
-    plt.xlim(left=0)    
-    plt.ylabel("Sound Pressure (Pa)")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-#plot_effective_pres(df, effective_pressures)
-
-
-# 5. Calculate the OSPL for each chunk. 
-
-OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   # Moet de 10 * niet 20 * zijn?
-
-
-def plot_OSPL(x_effective_pres, OSPL):
-
-    plt.plot(x_effective_pres, OSPL, linewidth=0.7, color='red')
-
-    plt.title("Overall Sound Pressure Level (OSPL)")
-    plt.xlabel("Time (s)")
-    plt.ylabel("OSPL (dB)")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-#plot_OSPL(x_effective_pres, OSPL)
 
 # 6. DFT transformation
 
@@ -135,7 +91,6 @@ chunk_270    [(16.504125052111046+0j), (1.490936037975648-1...
 Name: fft, Length: 271, dtype: object
 """
 #print(fourier_df['freqs'])
-
 """
 
 chunk_0      [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0...
@@ -167,54 +122,17 @@ chunk_270    [1.7024133983482463e-06, 2.6855466033158217e-0...
 Name: power, Length: 271, dtype: object
 """
 
-
-
-#print(power_array.shape)
-
-
-# # Step 2: Stack them into a 2D numpy array
-# power_array = np.vstack(lists)
-
-# power_array = np.array()
-
-# for i in len(fourier_df['power']):
-#     power_array.vstack(i)
-
-# print(power_array)
-
-# print(fourier_df)
-
-# Plot function for individual fourier transforms
-def fourier_plot(fourier_df):
-
-    plt.plot(fourier_df['freqs'][0], fourier_df['fft'][0] , linewidth=0.7, color='purple')
-    plt.title("Fourier Transform")
-    plt.xlabel("Frequency (s)")
-    plt.ylabel("Pa^2/Hz (dB)")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-   
-#fourier_plot(fourier_df)
-
-lists = fourier_df['power'].tolist()
+lists = abs(fourier_df['power']).tolist()
 power_array = np.vstack(lists)
+power_array = 20 * np.log10(power_array)
 
-# # Convert list of complex FFT results to magnitudes
-# powers = np.array([np.array(p) for p in fourier_df['power']])         #Pm p114 reader
-# fouriers = np.array([np.abs(np.array(f)) for f in fourier_df['fft']])
 
 # # Convert frequencies to a 2D array (assuming they’re all identical)
 freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformation
 times = x_effective_pres  # one per chunk
 
-# # Convert to decibels (dB scale)
-
-#                   # NAKIJKEN
-# print(spectrogram.shape)
-
 spectrogram = np.transpose(power_array)
-#print(spectrogram)
+
 
 # --- Plot ---
 def spectrum_plot(spectrogram, freqs, times):
@@ -225,8 +143,7 @@ def spectrum_plot(spectrogram, freqs, times):
         extent=[times.min(), times.max(), freqs.min(), freqs.max()],
         origin='lower',
         aspect='auto',
-        cmap='jet',
-        vmin=-20, vmax=60
+        cmap='jet'
     )
     plt.colorbar(label='dB')
     plt.xlabel('time [s]')
@@ -235,20 +152,3 @@ def spectrum_plot(spectrogram, freqs, times):
     plt.show()
 
 spectrum_plot(spectrogram, freqs, times)
-
-
-# 7  instantaneous OSPL (in dB) as a function of time
-linear_matrix = 10 ** (spectrogram / 10)
-OSPL_freq = 10 * np.log10(np.sum(linear_matrix, axis=1))
-#print(spectrogram)
-#print('OSPL', OSPL_freq.shape)
-plt.figure(figsize=(10, 5))
-plt.plot(x_effective_pres, OSPL, color='red', label='Time-domain OSPL (Q5)')
-plt.plot(x_effective_pres[:len(OSPL_freq)], OSPL_freq, '--', color='blue', label='Freq-domain OSPL (Q7)')
-plt.xlabel('Time (s)')
-plt.ylabel('OSPL (dB)')
-plt.title('Instantaneous OSPL Comparison')
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-#plt.show()
