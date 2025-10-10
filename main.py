@@ -37,27 +37,31 @@ samples_per_chunck = sampling_frequency * chunk_duration
 print(f"samples_per_chunck: {samples_per_chunck}")
 
 # 4. Calculate the so-called  ́effective sound pressure ́ as a function of time using equation 1.4 from the lecture notes
-# x_2_data is a list containing the squared average pressure for each chunk
 
+# set up data sets
 effective_pressures = []
 fourier_data = {}  # Use a dictionary to store Fourier transform results
-
 
 sample_iterations = int(np.ceil((N_samples/samples_per_chunck)))
 x_effective_pres = np.arange(0.05, duration, chunk_duration)
 
 for i in range(sample_iterations):
+
+    ## ----- CHUNK FORMATTING --------#
     start_idx = int(i * samples_per_chunck)
     end_idx = int(min(start_idx + samples_per_chunck, N_samples))
 
     chunk = df[start_idx:end_idx]  # Extract the chunk
 
-    ## ----------- Calculations for Fourier vraag --------------- ## 
+
+    ## ------ Q4: CALCULATING THE EFFECTIVE PRESSURE ----- ##
+
+    effective_pres_dt = np.sqrt(1/chunk_duration*(np.sum(chunk['amplitude']**2))*dt)
+    effective_pressures.append(effective_pres_dt)
+
+    ## ----------- Q6: Calculations for Fourier vraag --------------- ## 
     # Perform Fourier transformation
     fft_result = np.fft.fft(chunk['amplitude']**2)          # Result is Xm
-    
-    #fft_result = 20 * np.log10(fft_result)
-    #print(np.max(fft_result))
 
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
 
@@ -73,10 +77,7 @@ for i in range(sample_iterations):
         'power': power_spectrum[pos_mask]
     }
   
-    # for question 4
-    effective_pres_dt = np.sqrt(1/chunk_duration*(np.sum(chunk['amplitude']**2))*dt)
-    effective_pressures.append(effective_pres_dt)
-
+    
 # Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
 
@@ -96,8 +97,7 @@ def plot_effective_pres(df, effective_pressures):
 
 # 5. Calculate the OSPL for each chunk. 
 
-OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   # Moet de 10 * niet 20 * zijn?
-
+OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   # Moet de 10 * niet 20 * zijn? Nee, zit nu in de **2
 
 def plot_OSPL(x_effective_pres, OSPL):
 
@@ -115,9 +115,9 @@ def plot_OSPL(x_effective_pres, OSPL):
 # 6. DFT transformation
 
 fourier_df = pd.DataFrame.from_dict(fourier_data, orient='index')
-fourier_df = fourier_df[:-1]
+fourier_df = fourier_df[:-1]        # laatste dataset is shit, dus die heb ik verwijderd
 
-# Understanding the data
+## ------------ STEP 1:  Understanding the data ------- ##
 #print(fourier_df['fft'])
 
 """
@@ -151,6 +151,7 @@ chunk_269    [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0...
 chunk_270    [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0...
 Name: freqs, Length: 271, dtype: object
 """
+
 #print(fourier_df['power']) #>> shape (271, 2000) niet gehaald, dus omzetten
 """
 chunk_0      [3.6278922519071447e-07, 4.256673053391928e-08...
@@ -166,8 +167,7 @@ chunk_269    [2.3408942885299e-06, 1.746973383068544e-07, 2...
 chunk_270    [1.7024133983482463e-06, 2.6855466033158217e-0...
 Name: power, Length: 271, dtype: object
 """
-
-
+## -------- STEP 2, Plotting ------- ##
 # Plot function for individual fourier transforms
 def fourier_plot(fourier_df):
 
@@ -187,20 +187,21 @@ def fourier_plot(fourier_df):
 # en ook power array omgezet naar dB met Pe0
 lists = abs(fourier_df['power']).tolist()
 power_array = np.vstack(lists)
-power_array = 10* np.log10(power_array/Pe_0**2)
+power_array_db = 10* np.log10(power_array/Pe_0**2)
 
 # # Convert frequencies to a 2D array (assuming they’re all identical)
 freqs = np.array(fourier_df['freqs'].iloc[0])/1000              #kHz transformation
 times = x_effective_pres  # one per chunk
 
-spectrogram = np.transpose(power_array)
+spectrogram = power_array_db
+print(spectrogram.shape)
 
 # --- Plot ---
 def spectrum_plot(spectrogram, freqs, times):
 
     plt.figure(figsize=(10, 6))
     plt.imshow(
-        spectrogram,
+        spectrogram.T,
         extent=[times.min(), times.max(), freqs.min(), freqs.max()],
         origin='lower',
         aspect='auto',
