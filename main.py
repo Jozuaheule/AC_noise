@@ -61,7 +61,7 @@ for i in range(sample_iterations):
 
     ## ----------- Q6: Calculations for Fourier vraag --------------- ## 
     # Perform Fourier transformation
-    fft_result = np.fft.fft(chunk['amplitude']**2)          # Result is Xm
+    fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
 
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
 
