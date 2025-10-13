@@ -110,7 +110,7 @@ def plot_OSPL(x_effective_pres, OSPL):
     plt.tight_layout()
     plt.show()
 
-plot_OSPL(x_effective_pres, OSPL)
+# plot_OSPL(x_effective_pres, OSPL)
 
 # 6. DFT transformation
 
