@@ -51,7 +51,7 @@ for i in range(sample_iterations):
     start_idx = int(i * samples_per_chunck)
     end_idx = int(min(start_idx + samples_per_chunck, N_samples))
 
-    chunk = df[start_idx:end_idx]  # Extract the chunk
+    chunk = df.iloc[start_idx:end_idx]  # Extract the chunk
 
 
     ## ------ Q4: CALCULATING THE EFFECTIVE PRESSURE ----- ##
@@ -61,21 +61,33 @@ for i in range(sample_iterations):
 
     ## ----------- Q6: Calculations for Fourier vraag --------------- ## 
     # Perform Fourier transformation
-    fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
+    w = np.hanning(len(chunk))
+    U = (1/len(chunk)) * np.sum(w**2)
+    fft_result = np.fft.fft(w * chunk['amplitude']) 
+    Spp = (2 / (sampling_frequency * len(chunk) * U)) * (np.abs(fft_result)**2)
 
-    fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
 
-    power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
+
+    # fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
+    # fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
+    # power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
+
+    power_spectrum = Spp[:len(Spp)//2]   # single-sided
+    fft_freqs = np.fft.fftfreq(len(chunk), d=dt)[:len(Spp)//2]
+
+
 
     # cut of all negative fourier frequencies
     pos_mask = fft_freqs >= 0
 
     # Store results in the dictionary
+    # Store results in the dictionary (already single-sided)
     fourier_data[f'chunk_{i}'] = {
-        'fft': fft_result[pos_mask],
-        'freqs': fft_freqs[pos_mask],
-        'power': power_spectrum[pos_mask]
+        'fft': fft_result[:len(fft_result)//2],
+        'freqs': fft_freqs,
+        'power': power_spectrum
     }
+
   
     
 # Plot function for effective sound pressure
@@ -97,7 +109,8 @@ plot_effective_pres(df, effective_pressures)
 
 # 5. Calculate the OSPL for each chunk. 
 
-OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   
+OSPL = 10 * np.log10((np.array(effective_pressures)**2) / (Pe_0**2))
+ 
 
 def plot_OSPL(x_effective_pres, OSPL):
 
@@ -224,7 +237,8 @@ spectrum_plot(spectrogram, freqs, times)
 # bij OSPL_freq wordt elke colum gesummed (dat betekend axis=1) waardoor je shape (271,1) hebt. Zie ook formules in slide 15 in part 1
 
 power_not_db = 10 ** (power_array_db / 10)
-OSPL_freq = 10 * np.log10(np.sum(power_not_db, axis=1))
+OSPL_freq = 10 * np.log10(np.sum(power_array / Pe_0**2, axis=1))
+
 
 
 print(OSPL_freq.shape)
