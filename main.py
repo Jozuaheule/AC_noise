@@ -81,36 +81,36 @@ for i in range(sample_iterations):
 # Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
 
-    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue')
-    plt.plot(x_effective_pres, effective_pressures, linewidth=2, color='green')
-
+    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue', label='Signal')
+    plt.plot(x_effective_pres, effective_pressures, linewidth=2, color='green', label='Effective pressure')
     plt.title("Waveform with effective pressure")
-    plt.xlabel("Time (s)")
+    plt.xlabel("Time [s]")
     plt.xlim(left=0)    
-    plt.ylabel("Sound Pressure (Pa)")
+    plt.ylabel("Sound Pressure [Pa]")
     plt.grid(True)
+    plt.legend()
     plt.tight_layout()
     plt.show()
 
-#plot_effective_pres(df, effective_pressures)
+plot_effective_pres(df, effective_pressures)
 
 
 # 5. Calculate the OSPL for each chunk. 
 
-OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   # Moet de 10 * niet 20 * zijn? Nee, zit nu in de **2
+OSPL = [10 * np.log10(pres**2 / Pe_0**2) for pres in effective_pressures]   
 
 def plot_OSPL(x_effective_pres, OSPL):
 
-    plt.plot(x_effective_pres, OSPL, linewidth=0.7, color='red')
-
+    plt.plot(x_effective_pres, OSPL, linewidth=0.7, color='red', label='OSPL')
     plt.title("Overall Sound Pressure Level (OSPL)")
-    plt.xlabel("Time (s)")
-    plt.ylabel("OSPL (dB)")
+    plt.xlabel("Time [s]")
+    plt.ylabel("OSPL [dB]")
     plt.grid(True)
+    plt.legend()
     plt.tight_layout()
     plt.show()
 
-#plot_OSPL(x_effective_pres, OSPL)
+plot_OSPL(x_effective_pres, OSPL)
 
 # 6. DFT transformation
 
@@ -118,7 +118,7 @@ fourier_df = pd.DataFrame.from_dict(fourier_data, orient='index')
 fourier_df = fourier_df[:-1]        # laatste dataset is shit, dus die heb ik verwijderd
 
 ## ------------ STEP 1:  Understanding the data ------- ##
-#print(fourier_df['fft'])
+print(fourier_df['fft'])
 
 """
 chunk_0      [(7.618810670341817+0j), (2.5961177079897713-0...
@@ -173,13 +173,14 @@ def fourier_plot(fourier_df):
 
     plt.plot(fourier_df['freqs'][0], fourier_df['fft'][0] , linewidth=0.7, color='purple')
     plt.title("Fourier Transform")
-    plt.xlabel("Frequency (s)")
-    plt.ylabel("Pa^2/Hz (dB)")
+    plt.xlabel("Frequency [s]")
+    plt.ylabel("Pa^2/Hz [dB]")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
    
-#fourier_plot(fourier_df)
+fourier_plot(fourier_df)
+
 
 ## ------- STEP 3, OPGAVE 6 ---- ##
 
@@ -215,7 +216,7 @@ def spectrum_plot(spectrogram, freqs, times):
     plt.title('Spectrogram of flyover')
     plt.show()
 
-#spectrum_plot(spectrogram, freqs, times)
+spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
 
@@ -232,8 +233,8 @@ print(OSPL_freq.shape)
 plt.figure(figsize=(10, 5))
 plt.plot(x_effective_pres, OSPL, color='red', label='Time-domain OSPL (Q5)')
 plt.plot(x_effective_pres[:len(OSPL_freq)], OSPL_freq, '--', color='blue', label='Freq-domain OSPL (Q7)')
-plt.xlabel('Time (s)')
-plt.ylabel('OSPL (dB)')
+plt.xlabel('Time [s]')
+plt.ylabel('OSPL [dB]')
 plt.title('Instantaneous OSPL Comparison')
 plt.grid(True)
 plt.legend()
