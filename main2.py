@@ -25,7 +25,7 @@ MAT_FILENAME = "Flyover_No_5.mat"   # change if your filename differs
 SOUND_VAR_NAMES = ["sound_pressure", "soundPressure", "p", "pressure", "y"]  # candidates to try
 FS = 40000.0           # sampling frequency (Hz)
 CHUNK_DURATION = 0.1   # seconds (T)
-P_REF = 20e-6          # reference sound pressure in Pa (20 µPa)
+P_REF = 20e-5          # reference sound pressure in Pa (20 µPa)
 WINDOW = "hann"        # window to use for periodogram
 DETREND = False        # do not detrend chunks (for raw energy consistency)
 
