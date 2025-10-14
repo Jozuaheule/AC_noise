@@ -232,7 +232,42 @@ def spectrum_plot(spectrogram, freqs, times):
 spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
+print('--- Question 7 ---')
+print('Calculating OSPL from the frequency domain (spectrum)...')
 
+# Frequency resolution (Hz)
+df_freq = sampling_frequency / samples_per_chunck  # same as fs / N_chunk in MATLAB
+
+# power_array contains the PSD values (Pa^2/Hz) for each chunk
+# According to Parseval's theorem:
+#   p_e^2 = sum(PSD * df)
+# where df is the frequency bin width (Hz)
+
+p_e_squared_freq = np.sum(power_array * df_freq, axis=1)
+
+# Convert to dB scale
+OSPL_freq_domain = 10 * np.log10(p_e_squared_freq / (Pe_0 ** 2))
+
+# --- Plot results ---
+plt.figure(figsize=(10, 5))
+plt.plot(x_effective_pres, OSPL, color='red', label='Time-domain OSPL (Q5)')
+plt.plot(x_effective_pres[:len(OSPL_freq_domain)], OSPL_freq_domain, '--', color='blue', label='Freq-domain OSPL (Q7)')
+plt.xlabel('Time [s]')
+plt.ylabel('OSPL [dB]')
+plt.title('Instantaneous OSPL Comparison (Time vs Frequency Domain)')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print('Calculation complete. OSPL from frequency domain plotted.')
+
+
+
+
+
+
+'''
 # wat er gebeurt, over de power_array_db van (shape 271, 2000) wordt omgezet in power_not_db na het terug te zetten naar niet dB vorm
 # bij OSPL_freq wordt elke colum gesummed (dat betekend axis=1) waardoor je shape (271,1) hebt. Zie ook formules in slide 15 in part 1
 
@@ -253,4 +288,4 @@ plt.title('Instantaneous OSPL Comparison')
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-plt.show()
+plt.show()'''
