@@ -232,16 +232,13 @@ def spectrum_plot(spectrogram, freqs, times):
 spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
-print('--- Question 7 ---')
-print('Calculating OSPL from the frequency domain (spectrum)...')
 
 # Frequency resolution (Hz)
-df_freq = sampling_frequency / samples_per_chunck  # same as fs / N_chunk in MATLAB
+df_freq = sampling_frequency / samples_per_chunck  
 
 # power_array contains the PSD values (Pa^2/Hz) for each chunk
 # According to Parseval's theorem:
-#   p_e^2 = sum(PSD * df)
-# where df is the frequency bin width (Hz)
+#   p_e^2 = sum(PSD * df)      eq 5.12 reader
 
 p_e_squared_freq = np.sum(power_array * df_freq, axis=1)
 
@@ -262,7 +259,33 @@ plt.show()
 
 print('Calculation complete. OSPL from frequency domain plotted.')
 
+'''%% --- Question 7: Calculate OSPL from Frequency Domain ---
+fprintf('--- Question 7 ---\n');
+fprintf('Calculating OSPL from the frequency domain (spectrum)...\n');
+% Relevant Equations:
+% Parseval's theorem (Eq. 5.12) states that the total energy is conserved
+% between time and frequency domains: p_e^2 = integral(P(f) df). 
+% For our discrete case, this integral becomes a sum:
+% p_e^2 = sum(P_m * df)
+% The frequency resolution df is fs / N_chunk.
 
+df = fs / N_chunk; % Frequency resolution
+
+% Calculate the mean square pressure (p_e^2) for each chunk by summing the PSD
+% values and multiplying by the frequency resolution df.
+p_e_squared_freq = sum(PSD_matrix, 1) * df;
+
+% Calculate OSPL from the frequency domain values
+% OSPL = 10 * log10(p_e_squared_freq / p_ref^2)
+OSPL_freq_domain = 10 * log10(p_e_squared_freq / p_ref^2);
+
+% Plot the result as a red dashed line on top of the previous OSPL plot
+figure(2); % Bring Figure 2 to the front
+plot(t_chunks, OSPL_freq_domain, 'r--', 'LineWidth', 2);
+legend('OSPL (Time Domain)', 'OSPL (Frequency Domain)', 'Location', 'northwest');
+hold off;
+fprintf('Calculation complete. OSPL from frequency domain plotted in Figure 2.\n');
+fprintf('\n--- Assignment Script Finished ---\n');'''
 
 
 
