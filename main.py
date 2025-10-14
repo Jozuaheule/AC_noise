@@ -8,6 +8,9 @@ N_samples = len(df.index)
 chunk_duration = 0.1
 Pe_0 = 20e-5  # N/m^2
 
+blue = (77/255, 139/255, 247/255)
+green = (49/255, 108/255, 20/255)
+
 # Voeg een tijd-as toe (in seconden)
 df["time"] = np.arange(N_samples) / sampling_frequency
 
@@ -93,8 +96,8 @@ for i in range(sample_iterations):
 # Plot function for effective sound pressure
 def plot_effective_pres(df, effective_pressures):
 
-    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color='blue', label='Signal')
-    plt.plot(x_effective_pres, effective_pressures, linewidth=2, color='green', label='Effective pressure')
+    plt.plot(df["samples"], df["amplitude"], linewidth=0.7, color=blue, label='Signal')
+    plt.plot(x_effective_pres, effective_pressures, linewidth=2, color=green, label='Effective pressure')
     plt.title("Waveform with effective pressure")
     plt.xlabel("Time [s]")
     plt.xlim(left=0)    
