@@ -71,13 +71,12 @@ for i in range(sample_iterations):
 
 
 
-    # fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
-    # fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
-    # power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
+    fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
+    fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
+    power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
 
-    power_spectrum = Spp[:len(Spp)//2]   # single-sided
-    fft_freqs = np.fft.fftfreq(len(chunk), d=dt)[:len(Spp)//2]
-
+    #power_spectrum = Spp[:len(Spp)//2]   # single-sided
+    #fft_freqs = np.fft.fftfreq(len(chunk), d=dt)[:len(Spp)//2]
 
 
     # cut of all negative fourier frequencies
@@ -86,7 +85,7 @@ for i in range(sample_iterations):
     # Store results in the dictionary
     # Store results in the dictionary (already single-sided)
     fourier_data[f'chunk_{i}'] = {
-        'fft': fft_result[:len(fft_result)//2],
+        'fft': fft_result, #[:len(fft_result)//2],
         'freqs': fft_freqs,
         'power': power_spectrum
     }
