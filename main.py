@@ -70,7 +70,6 @@ for i in range(sample_iterations):
     Spp = (2 / (sampling_frequency * len(chunk) * U)) * (np.abs(fft_result)**2)
 
 
-
     fft_result = np.fft.fft(chunk['amplitude'])          # Result is Xm
     fft_freqs = np.fft.fftfreq(len(chunk), d=dt)            # x as for frequency
     power_spectrum = (abs(fft_result)**2*dt**2)/chunk_duration
@@ -187,6 +186,7 @@ Name: power, Length: 271, dtype: object
 def fourier_plot(fourier_df):
 
     plt.plot(fourier_df['freqs'][0], fourier_df['fft'][0] , linewidth=0.7, color='purple')
+    plt.xlim([0,20000])
     plt.title("Fourier Transform")
     plt.xlabel("Frequency [s]")
     plt.ylabel("Pa^2/Hz [dB]")
@@ -231,7 +231,7 @@ def spectrum_plot(spectrogram, freqs, times):
     plt.title('Spectrogram of flyover')
     plt.show()
 
-spectrum_plot(spectrogram, freqs, times)
+# spectrum_plot(spectrogram, freqs, times)
 
 # 7  instantaneous OSPL (in dB) as a function of time
 
@@ -260,57 +260,3 @@ plt.tight_layout()
 plt.show()
 
 print('Calculation complete. OSPL from frequency domain plotted.')
-
-'''%% --- Question 7: Calculate OSPL from Frequency Domain ---
-fprintf('--- Question 7 ---\n');
-fprintf('Calculating OSPL from the frequency domain (spectrum)...\n');
-% Relevant Equations:
-% Parseval's theorem (Eq. 5.12) states that the total energy is conserved
-% between time and frequency domains: p_e^2 = integral(P(f) df). 
-% For our discrete case, this integral becomes a sum:
-% p_e^2 = sum(P_m * df)
-% The frequency resolution df is fs / N_chunk.
-
-df = fs / N_chunk; % Frequency resolution
-
-% Calculate the mean square pressure (p_e^2) for each chunk by summing the PSD
-% values and multiplying by the frequency resolution df.
-p_e_squared_freq = sum(PSD_matrix, 1) * df;
-
-% Calculate OSPL from the frequency domain values
-% OSPL = 10 * log10(p_e_squared_freq / p_ref^2)
-OSPL_freq_domain = 10 * log10(p_e_squared_freq / p_ref^2);
-
-% Plot the result as a red dashed line on top of the previous OSPL plot
-figure(2); % Bring Figure 2 to the front
-plot(t_chunks, OSPL_freq_domain, 'r--', 'LineWidth', 2);
-legend('OSPL (Time Domain)', 'OSPL (Frequency Domain)', 'Location', 'northwest');
-hold off;
-fprintf('Calculation complete. OSPL from frequency domain plotted in Figure 2.\n');
-fprintf('\n--- Assignment Script Finished ---\n');'''
-
-
-
-
-'''
-# wat er gebeurt, over de power_array_db van (shape 271, 2000) wordt omgezet in power_not_db na het terug te zetten naar niet dB vorm
-# bij OSPL_freq wordt elke colum gesummed (dat betekend axis=1) waardoor je shape (271,1) hebt. Zie ook formules in slide 15 in part 1
-
-power_not_db = 10 ** (power_array_db / 10)
-OSPL_freq = 10 * np.log10(np.sum(power_array / Pe_0**2, axis=1))
-
-
-
-print(OSPL_freq.shape)
-#print(spectrogram)
-#print('OSPL', OSPL_freq.shape)
-plt.figure(figsize=(10, 5))
-plt.plot(x_effective_pres, OSPL, color='red', label='Time-domain OSPL (Q5)')
-plt.plot(x_effective_pres[:len(OSPL_freq)], OSPL_freq, '--', color='blue', label='Freq-domain OSPL (Q7)')
-plt.xlabel('Time [s]')
-plt.ylabel('OSPL [dB]')
-plt.title('Instantaneous OSPL Comparison')
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.show()'''
